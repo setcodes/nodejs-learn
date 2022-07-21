@@ -20,4 +20,12 @@ const culcV1 = (argLeft, action, argRight, decimal) => {
     }
 }
 
+/* func args:
+    1 - number;
+    2 - expression;
+    3 - number;
+    4 (optional) - the number of numbers after the decimal point;
+    
+    return result number
+*/
 culcV1(1003, "*", 459, 2);
