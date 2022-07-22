@@ -22,7 +22,7 @@ const setDelay = (args) => {
 
 const parseTimer = (timerData) => {
     const typeTime = timerData.slice(-1);
-    let count = timerData;
+    const count = timerData;
     if (typeTime === 's' || typeTime === 'm') {
         count = timerData.replace(typeTime, '');
     }
