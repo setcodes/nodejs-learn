@@ -1,5 +1,5 @@
 const addAction = (argsLeft, argsRight, decimal) => {
-    if (!decimal) {
+    if (decimal) {
         const result =  +argsLeft + +argsRight;
         return result.toFixed(+decimal)
     }

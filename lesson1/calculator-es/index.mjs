@@ -1,6 +1,11 @@
 import * as actionType from './func.mjs';
 
-const culcV1 = (argLeft, action, argRight, decimal) => {
+const culcV1 = (args) => {
+    const argLeft = args[2];
+    const action = args[3];
+    const argRight = args[4];
+    const decimal = args[5] ? args[5] : 0;
+
     switch (action) {
         case '+':
             console.log(actionType.add(argLeft, argRight));
@@ -19,5 +24,15 @@ const culcV1 = (argLeft, action, argRight, decimal) => {
             break;
     }
 }
+/* func args:
+    1 - number;
+    2 - expression;
+    3 - number;
+    4 (optional) - the number of numbers after the decimal point;
+    
+    return result number console.log
 
-culcV1(1003, "/", 459, 2);
+    example: node index.js 10 + 10 1
+*/
+
+culcV1(process.argv);
