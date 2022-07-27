@@ -1,46 +1,53 @@
 const fs = require('fs');
 const { join } = require('path');
+const { Worker } = require('worker_threads');
 const { performance, PerformanceObserver } = require('perf_hooks');
+const {printSuccess, printError, printInverse, measure} = require('./log');
+
 
 const performanceObserver = new PerformanceObserver((items) => {
     items.getEntries().forEach((entry) => {
-        console.log(`${entry.name}: ${entry.duration}`);
+        printInverse(`${entry.name}: ${entry.duration}`);
     })
 });
 performanceObserver.observe({entryTypes: ['measure']});
 
-let count = 0;
 
-const getFilesCount = (path) => {
-    try {
-        try {
-            let content = fs.readdirSync(path, {withFileTypes: true})
-            content.map( el => {
-                if (fs.statSync(join(path, el.name)).isDirectory()) {
-                    getFilesCount(join(path, el.name));
-                }else {
-                    count = count + 1;
-                }
-            })
-            return count;
-        }catch (e) {
-            console.log(e.message);
-        }
+const worker = (path) => {
+    return new Promise( (resolve, reject) => {
+        performance.mark('worker start');
+        const worker = new Worker('./worker.js', {
+            workerData: {
+                path
+            }
+        });
+        worker.on('message', (msg) => {
+            resolve(msg);
+            performance.mark('worker end');
+            performance.measure('worker', 'worker start', 'worker end');
+        })
+        worker.on('error', (err) => {
+            reject(err);
+        });
+        worker.on('exit', () => {
+            printInverse("Worker завершил работу");
+        });
 
-    }catch (e) {
-        console.log(e.message);
-    }
-}
+    });
+};
 
-const main = (args) => {
-    performance.mark('worker start');
-    const path = args[2];
+const main = async (args) => {
+
+    const path = args[2].toString();
     if (!path) {
-        return console.error('Ошибка! Укажите путь!');
+        return printError('Ошибка! Укажите путь!!');
     }
-    console.log('Количество файлов: ' + getFilesCount(path) + ' шт.');
-    performance.mark('worker end');
-    performance.measure('worker', 'worker start', 'worker end');
+    // printSuccess('Количество файлов: ' + getFilesCount(path) + ' шт.');
+    printSuccess('Количество файлов: ' + await worker(path) + ' шт.')
+
+
 }
 
 main(process.argv);
+
+

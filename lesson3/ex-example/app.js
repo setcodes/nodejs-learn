@@ -26,7 +26,7 @@ const workerFunc = (array) => {
             reject(err);
         });
         worker.on('exit', () => {
-            console.log("Worker завершил работу");
+            console.log("worker завершил работу");
         });
     });
 };
