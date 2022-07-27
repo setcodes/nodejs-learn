@@ -3,7 +3,7 @@ const MINUTE = 60000;
 const msg = 'timer done!'
 
 const setDelay = (args) => {
-    
+
     const timerData = args[2];
     const timerDataParsed = parseTimer(timerData);
     switch (timerDataParsed.typeTime) {
@@ -22,7 +22,7 @@ const setDelay = (args) => {
 
 const parseTimer = (timerData) => {
     const typeTime = timerData.slice(-1);
-    const count = timerData;
+    let count = timerData;
     if (typeTime === 's' || typeTime === 'm') {
         count = timerData.replace(typeTime, '');
     }
