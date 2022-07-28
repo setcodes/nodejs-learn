@@ -1,9 +1,11 @@
+const notifier = require('node-notifier');
+
 const SECOND = 1000;
 const MINUTE = 60000;
 const msg = 'timer done!'
 
 const setDelay = (args) => {
-    
+
     const timerData = args[2];
     const timerDataParsed = parseTimer(timerData);
     switch (timerDataParsed.typeTime) {
@@ -30,7 +32,10 @@ const parseTimer = (timerData) => {
 }
 
 const callTimer = () => {
-    return console.log(msg);
+    return notifier.notify({
+        title: 'Timer',
+        message: msg
+    });
 
 }
 
