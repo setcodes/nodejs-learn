@@ -1,13 +1,11 @@
-const fs = require('fs');
-const { join } = require('path');
 const { Worker } = require('worker_threads');
 const { performance, PerformanceObserver } = require('perf_hooks');
-const {printSuccess, printError, printInverse, measure} = require('./log');
+const {printSuccess, printError, printInverse} = require('./log');
 
 
 const performanceObserver = new PerformanceObserver((items) => {
     items.getEntries().forEach((entry) => {
-        printInverse(`${entry.name}: ${entry.duration}`);
+        printInverse(`${entry.name}: ${entry.duration.toFixed(1)} ms`);
     })
 });
 performanceObserver.observe({entryTypes: ['measure']});
@@ -24,7 +22,7 @@ const worker = (path) => {
         worker.on('message', (msg) => {
             resolve(msg);
             performance.mark('worker end');
-            performance.measure('worker', 'worker start', 'worker end');
+            performance.measure('Затраченное время на выполнение', 'worker start', 'worker end');
         })
         worker.on('error', (err) => {
             reject(err);
@@ -40,12 +38,12 @@ const main = async (args) => {
 
     const path = args[2].toString();
     if (!path) {
-        return printError('Ошибка! Укажите путь!!');
+        return printError('Ошибка! Укажите путь!');
     }
-    // printSuccess('Количество файлов: ' + getFilesCount(path) + ' шт.');
-    printSuccess('Количество файлов: ' + await worker(path) + ' шт.')
-
-
+    const {count, totalSize, countDirs} = await worker(path);
+    printSuccess('Количество файлов: ' + count + ' шт.')
+    printSuccess('Количество вложенных директорий: ' + countDirs + ' шт.')
+    printInverse('Общий объем файлов: ' + totalSize + ' kb')
 }
 
 main(process.argv);
